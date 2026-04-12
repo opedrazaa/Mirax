@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mirax
 
-## Getting Started
+**Job application intelligence for Switzerland & EU job seekers.**
 
-First, run the development server:
+Get instant salary intel, gap analysis, personalized interview prep, and tailored cover letters — in seconds.
+
+🌐 **Live**: [mirax-five.vercel.app](https://mirax-five.vercel.app)
+
+---
+
+## Features
+
+- 🎯 **Match Verdict** — Apply, apply with caution, or skip
+- 💰 **Salary Intelligence** — CH/EU market rates for your experience
+- 💪 **Gap Analysis** — What to highlight, what to address
+- ✉️ **Cover Letters** — EN/FR/DE/ES, tailored to your CV (Pro)
+- 🎤 **Interview Prep** — Personalized questions & strategies (Pro)
+- 🚩 **Red Flags** — Ghost jobs, unrealistic requirements
+
+---
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router, TypeScript)
+- **Styling**: Tailwind CSS v4
+- **Auth & DB**: Supabase
+- **AI**: OpenAI GPT-4o
+- **Payments**: Stripe
+- **Job Search**: Adzuna API
+- **Hosting**: Vercel
+
+---
+
+## Local Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Fill in your keys
+
+# Run dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+OPENAI_API_KEY=
+ADZUNA_APP_ID=
+ADZUNA_API_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_PRO_MONTHLY=
+STRIPE_PRICE_PRO_BUNDLE=
+NEXT_PUBLIC_APP_URL=
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Push to `main` → Vercel auto-deploys.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Author
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built by [Orlando](https://linkedin.com/in/orlando-pedraza) after 120+ job applications in Switzerland.
+
+---
+
+© 2025 Mirax

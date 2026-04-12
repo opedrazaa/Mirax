@@ -89,7 +89,7 @@ export default function Home() {
         <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-pink-accent/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-pink-deep/20 rounded-full blur-[100px]" />
         
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-16 lg:py-55">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-16 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <motion.div
               initial="hidden"
@@ -248,14 +248,14 @@ export default function Home() {
 
       {/* How it works */}
       <section id="how-it-works" className="bg-dark-base">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-24 lg:py-85">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-18 lg:py-30">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
           >
-            <motion.h2 variants={fadeInUp} className="text-4xl lg:text-5xl font-bold mb-4">
+            <motion.h2 variants={fadeInUp} className="text-4xl lg:text-4xl font-bold mb-4">
               How it works
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-xl text-white/50 mb-16 max-w-2xl">
@@ -292,7 +292,7 @@ export default function Home() {
 
       {/* Features */}
       <section id="features" className="bg-dark-deep border-t border-white/10">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-24 lg:py-75">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-24 lg:py-45">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -300,7 +300,7 @@ export default function Home() {
             variants={staggerContainer}
           >
             <motion.div variants={fadeInUp} className="max-w-3xl mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-4">What you get in each briefing</h2>
+              <h2 className="text-4xl lg:text-4xl font-bold mb-4">What you get in each briefing</h2>
               <p className="text-xl text-white/50">Not another ATS score. Real intelligence you can act on.</p>
             </motion.div>
             
@@ -340,7 +340,7 @@ export default function Home() {
 
       {/* Cover Letter Preview Section */}
       <section className="bg-dark-base border-t border-white/10">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-24 lg:py-70">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-18 lg:py-30">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -352,7 +352,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 bg-pink-accent/10 text-pink-accent text-sm font-medium px-4 py-2 rounded-full mb-6">
                 <span>✨</span> Pro Feature
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+              <h2 className="text-4xl lg:text-4xl font-bold mb-6">
                 Cover letters that actually get read
               </h2>
               <p className="text-xl text-white/60 leading-relaxed mb-8">
@@ -363,7 +363,7 @@ export default function Home() {
                   "Matches your CV to the specific job requirements",
                   "Addresses gaps proactively with spin strategies",
                   "Respects Swiss/EU professional norms",
-                  "Ready to send — just review and personalize"
+                  "Ready to send. Just review and personalize"
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-pink-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -422,7 +422,7 @@ export default function Home() {
 
       {/* Interview Prep Section */}
       <section id="interview-prep" className="bg-dark-deep border-t border-white/10">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-24 lg:py-70">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-18 lg:py-30">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -494,7 +494,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 bg-purple-500/10 text-purple-400 text-sm font-medium px-4 py-2 rounded-full mb-6">
                 <span>🎤</span> Pro Feature
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+              <h2 className="text-4xl lg:text-4xl font-bold mb-6">
                 Walk into interviews prepared
               </h2>
               <p className="text-xl text-white/60 leading-relaxed mb-8">
@@ -532,7 +532,7 @@ export default function Home() {
 
       {/* Pricing */}
       <section id="pricing" className="bg-dark-base border-t border-white/10">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-24 lg:py-50">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-24 lg:py-40">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -540,7 +540,7 @@ export default function Home() {
             variants={staggerContainer}
           >
             <motion.div variants={fadeInUp} className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-4">Choose Your Plan</h2>
+              <h2 className="text-4xl lg:text-4xl font-bold mb-4">Choose Your Plan</h2>
               <p className="text-xl text-white/50">Start free. Upgrade when you're applying seriously.</p>
             </motion.div>
             
@@ -552,7 +552,7 @@ export default function Home() {
                 className="bg-dark-deep border border-white/10 rounded-2xl p-8"
               >
                 <h3 className="text-xl font-semibold mb-2">Free</h3>
-                <div className="text-5xl font-bold mb-2">
+                <div className="text-4xl font-bold mb-2">
                   $0<span className="text-lg text-white/50 font-normal">/forever</span>
                 </div>
                 <p className="text-white/50 mb-8">Get started with core intelligence</p>
@@ -607,7 +607,7 @@ export default function Home() {
                 
                 <div className="relative">
                   <h3 className="text-xl font-semibold mb-2">Pro</h3>
-                  <div className="text-5xl font-bold mb-2">
+                  <div className="text-4xl font-bold mb-2">
                     $12<span className="text-lg text-white/50 font-normal">/month</span>
                   </div>
                   <p className="text-white/50 mb-8">Everything you need to land the job</p>
@@ -654,7 +654,7 @@ export default function Home() {
                 </div>
                 
                 <h3 className="text-xl font-semibold mb-2">Job Search Bundle</h3>
-                <div className="text-5xl font-bold mb-2">
+                <div className="text-4xl font-bold mb-2">
                   $45<span className="text-lg text-white/50 font-normal">/6 months</span>
                 </div>
                 <p className="text-white/50 mb-8">For your entire job search journey</p>
@@ -703,7 +703,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full mb-8 bg-pink-accent/15 text-pink-accent">
                 Meet the maker
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold mb-10">
+              <h2 className="text-4xl lg:text-4xl font-bold mb-10">
                 I applied to 120+ jobs in Switzerland.<br />
                 <span className="text-white/50">So I built what I wished I had.</span>
               </h2>
@@ -741,7 +741,7 @@ export default function Home() {
             <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
             <div className="relative z-10 max-w-2xl">
-              <h2 className="text-4xl lg:text-6xl font-bold mb-6">Ready to apply smarter?</h2>
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6">Ready to apply smarter?</h2>
               <p className="text-xl text-white/80 mb-10">Stop wasting time on jobs you won't get. Start with 3 free analyses per month.</p>
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                 <Link href="/login" className="inline-flex items-center justify-center bg-white font-bold text-lg px-10 py-5 rounded-2xl hover:bg-white/90 transition-colors text-pink-deep">
