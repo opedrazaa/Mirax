@@ -83,7 +83,7 @@ export default function Home() {
       </motion.nav>
 
       {/* Hero */}
-      <section className="relative overflow-hidden pt-32 lg:pt-40">
+      <section className="relative overflow-hidden pt-32 lg:pt-32">
         {/* Background effects */}
         <div className="absolute inset-0 bg-gradient-to-br from-pink-deep/30 via-transparent to-transparent" />
         <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-pink-accent/10 rounded-full blur-[120px]" />
@@ -248,7 +248,7 @@ export default function Home() {
 
       {/* How it works */}
       <section id="how-it-works" className="bg-dark-base">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-18 lg:py-30">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-18 lg:py-45">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -340,7 +340,7 @@ export default function Home() {
 
       {/* Cover Letter Preview Section */}
       <section className="bg-dark-base border-t border-white/10">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-18 lg:py-30">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-18 lg:py-35">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -532,7 +532,7 @@ export default function Home() {
 
       {/* Pricing */}
       <section id="pricing" className="bg-dark-base border-t border-white/10">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-24 lg:py-40">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-24 lg:py-35">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -541,7 +541,7 @@ export default function Home() {
           >
             <motion.div variants={fadeInUp} className="text-center mb-16">
               <h2 className="text-4xl lg:text-4xl font-bold mb-4">Choose Your Plan</h2>
-              <p className="text-xl text-white/50">Start free. Upgrade when you're applying seriously.</p>
+              <p className="text-xl text-white/50">Start free. Upgrade when you're ready to get that job.</p>
             </motion.div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">

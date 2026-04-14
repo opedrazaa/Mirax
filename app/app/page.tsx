@@ -106,6 +106,31 @@ const stagger = {
   visible: { transition: { staggerChildren: 0.1 } }
 };
 
+// ============================================
+// FIX #2: Sanitize error messages (no API key leaks!)
+// ============================================
+function sanitizeErrorMessage(error: string): string {
+  // Check for common API key patterns and replace with generic message
+  if (
+    error.toLowerCase().includes('api key') ||
+    error.toLowerCase().includes('api_key') ||
+    error.toLowerCase().includes('sk_live') ||
+    error.toLowerCase().includes('sk_test') ||
+    error.toLowerCase().includes('invalid key') ||
+    error.match(/sk_[a-zA-Z0-9_]+/) ||
+    error.match(/[a-zA-Z0-9]{20,}/) // Long alphanumeric strings that might be keys
+  ) {
+    return "Something went wrong. Please try again or contact support.";
+  }
+  
+  // Also sanitize any very long error messages (might contain sensitive data)
+  if (error.length > 200) {
+    return "An error occurred. Please try again.";
+  }
+  
+  return error;
+}
+
 // Upgrade Modal Component
 function UpgradeModal({ 
   isOpen, 
@@ -613,55 +638,115 @@ function SalaryLineChart({
   );
 }
 
-// Transform cover letter to enthusiastic version
-function transformToEnthusiastic(letter: string): string {
-  // This function creates a genuinely different enthusiastic version
-  const transformations: [RegExp | string, string][] = [
-    // Opening transformations
-    [/I am writing to express my interest in/gi, "I am thrilled to apply for"],
-    [/I am writing to apply for/gi, "I couldn't be more excited to apply for"],
-    [/I would like to apply/gi, "I am eager to bring my skills to"],
-    [/I am interested in/gi, "I am genuinely excited about"],
-    
-    // Confidence boosters
-    [/I believe I would be/gi, "I am confident I would be"],
-    [/I think I could/gi, "I know I can"],
-    [/I feel I am/gi, "I am"],
-    [/I hope to/gi, "I am eager to"],
-    
-    // Enthusiasm markers
-    [/I would welcome the opportunity/gi, "I would absolutely love the opportunity"],
-    [/I am keen to/gi, "I am passionate about"],
-    [/I look forward to/gi, "I am excited about the possibility of"],
-    [/opportunity to discuss/gi, "chance to share my enthusiasm and discuss"],
-    
-    // Strong closings
-    [/Thank you for considering/gi, "Thank you so much for considering"],
-    [/I appreciate your time/gi, "I truly appreciate your time"],
-    [/please feel free to contact/gi, "please don't hesitate to reach out – I'd love to connect"],
-    
-    // Skill descriptions
-    [/I have experience in/gi, "I have developed strong expertise in"],
-    [/I worked on/gi, "I had the exciting opportunity to work on"],
-    [/I was responsible for/gi, "I took ownership of"],
-    [/I contributed to/gi, "I played a key role in"],
-    
-    // Impact statements
-    [/which resulted in/gi, "which led to impressive results including"],
-    [/successfully/gi, "successfully and proudly"],
-    [/achieved/gi, "exceeded expectations by achieving"],
-    
-    // Company enthusiasm
-    [/your company/gi, "your innovative company"],
-    [/your team/gi, "your talented team"],
-    [/your organization/gi, "your forward-thinking organization"],
-    [/the position/gi, "this exciting position"],
-    [/the role/gi, "this fantastic role"],
-  ];
+// ============================================
+// FIX #3: Transform cover letter to enthusiastic version
+// Now supports EN, FR, DE, ES!
+// ============================================
+function transformToEnthusiastic(letter: string, language: Language = "EN"): string {
+  // Language-specific transformations
+  const transformations: Record<Language, [RegExp | string, string][]> = {
+    EN: [
+      // Opening transformations
+      [/I am writing to express my interest in/gi, "I am thrilled to apply for"],
+      [/I am writing to apply for/gi, "I couldn't be more excited to apply for"],
+      [/I would like to apply/gi, "I am eager to bring my skills to"],
+      [/I am interested in/gi, "I am genuinely excited about"],
+      // Confidence boosters
+      [/I believe I would be/gi, "I am confident I would be"],
+      [/I think I could/gi, "I know I can"],
+      [/I feel I am/gi, "I am"],
+      [/I hope to/gi, "I am eager to"],
+      // Enthusiasm markers
+      [/I would welcome the opportunity/gi, "I would absolutely love the opportunity"],
+      [/I am keen to/gi, "I am passionate about"],
+      [/I look forward to/gi, "I am excited about the possibility of"],
+      [/opportunity to discuss/gi, "chance to share my enthusiasm and discuss"],
+      // Strong closings
+      [/Thank you for considering/gi, "Thank you so much for considering"],
+      [/I appreciate your time/gi, "I truly appreciate your time"],
+      [/please feel free to contact/gi, "please don't hesitate to reach out – I'd love to connect"],
+      // Skill descriptions
+      [/I have experience in/gi, "I have developed strong expertise in"],
+      [/I worked on/gi, "I had the exciting opportunity to work on"],
+      [/I was responsible for/gi, "I took ownership of"],
+      [/I contributed to/gi, "I played a key role in"],
+      // Impact statements
+      [/which resulted in/gi, "which led to impressive results including"],
+      [/successfully/gi, "successfully and proudly"],
+      [/achieved/gi, "exceeded expectations by achieving"],
+      // Company enthusiasm
+      [/your company/gi, "your innovative company"],
+      [/your team/gi, "your talented team"],
+      [/your organization/gi, "your forward-thinking organization"],
+      [/the position/gi, "this exciting position"],
+      [/the role/gi, "this fantastic role"],
+    ],
+    FR: [
+      // French transformations
+      [/Je vous écris pour postuler/gi, "C'est avec grand enthousiasme que je postule"],
+      [/Je souhaite postuler/gi, "Je suis très motivé(e) pour postuler"],
+      [/Je me permets de vous adresser ma candidature/gi, "Je suis ravi(e) de vous présenter ma candidature"],
+      [/Je suis intéressé(e) par/gi, "Je suis passionné(e) par"],
+      [/J'aimerais/gi, "Je serais ravi(e) de"],
+      [/Je pense pouvoir/gi, "Je suis convaincu(e) de pouvoir"],
+      [/Je crois que/gi, "Je suis persuadé(e) que"],
+      [/J'espère/gi, "Je suis impatient(e) de"],
+      [/Je serais heureux/gi, "Ce serait un immense plaisir"],
+      [/dans l'attente de votre réponse/gi, "dans l'attente enthousiaste de votre réponse"],
+      [/Je vous remercie/gi, "Je vous remercie sincèrement"],
+      [/Cordialement/gi, "Avec enthousiasme"],
+      [/J'ai travaillé sur/gi, "J'ai eu le privilège de travailler sur"],
+      [/J'ai de l'expérience en/gi, "J'ai développé une solide expertise en"],
+      [/votre entreprise/gi, "votre entreprise innovante"],
+      [/votre équipe/gi, "votre équipe talentueuse"],
+      [/ce poste/gi, "cette opportunité passionnante"],
+      [/le poste/gi, "ce poste stimulant"],
+    ],
+    DE: [
+      // German transformations
+      [/Ich bewerbe mich hiermit/gi, "Mit großer Begeisterung bewerbe ich mich"],
+      [/Ich möchte mich bewerben/gi, "Ich freue mich sehr, mich zu bewerben"],
+      [/Ich interessiere mich für/gi, "Ich bin begeistert von"],
+      [/Ich würde gerne/gi, "Ich würde mich freuen"],
+      [/Ich glaube, dass/gi, "Ich bin überzeugt, dass"],
+      [/Ich denke, ich könnte/gi, "Ich bin sicher, dass ich"],
+      [/Ich hoffe/gi, "Ich bin gespannt"],
+      [/Über eine Einladung würde ich mich freuen/gi, "Ich würde mich außerordentlich über ein Gespräch freuen"],
+      [/Mit freundlichen Grüßen/gi, "Mit begeisterten Grüßen"],
+      [/Vielen Dank für Ihre Zeit/gi, "Herzlichen Dank für Ihre Zeit"],
+      [/Ich habe Erfahrung in/gi, "Ich habe fundierte Expertise entwickelt in"],
+      [/Ich war verantwortlich für/gi, "Ich hatte die spannende Aufgabe"],
+      [/Ihr Unternehmen/gi, "Ihr innovatives Unternehmen"],
+      [/Ihr Team/gi, "Ihr talentiertes Team"],
+      [/die Stelle/gi, "diese aufregende Position"],
+      [/die Position/gi, "diese fantastische Möglichkeit"],
+    ],
+    ES: [
+      // Spanish transformations
+      [/Me dirijo a usted para/gi, "Es un placer dirigirme a usted para"],
+      [/Quisiera postularme/gi, "Me entusiasma postularme"],
+      [/Estoy interesado en/gi, "Estoy muy emocionado por"],
+      [/Me gustaría/gi, "Sería un honor"],
+      [/Creo que podría/gi, "Estoy convencido de que puedo"],
+      [/Pienso que/gi, "Estoy seguro de que"],
+      [/Espero poder/gi, "Estoy ansioso por"],
+      [/Quedo a la espera/gi, "Quedo con entusiasmo a la espera"],
+      [/Atentamente/gi, "Con gran entusiasmo"],
+      [/Gracias por su tiempo/gi, "Le agradezco sinceramente su tiempo"],
+      [/Agradezco su consideración/gi, "Agradezco enormemente su consideración"],
+      [/He trabajado en/gi, "He tenido el privilegio de trabajar en"],
+      [/Tengo experiencia en/gi, "He desarrollado una sólida experiencia en"],
+      [/su empresa/gi, "su innovadora empresa"],
+      [/su equipo/gi, "su talentoso equipo"],
+      [/el puesto/gi, "esta emocionante oportunidad"],
+      [/la posición/gi, "esta fantástica posición"],
+    ],
+  };
   
   let result = letter;
+  const langTransforms = transformations[language] || transformations.EN;
   
-  for (const [pattern, replacement] of transformations) {
+  for (const [pattern, replacement] of langTransforms) {
     result = result.replace(pattern, replacement);
   }
   
@@ -843,11 +928,13 @@ export default function AppPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError(data.error || "Failed to start checkout");
+        // FIX #2: Sanitize error message
+        setError(sanitizeErrorMessage(data.error || "Failed to start checkout"));
         setCheckingOut(false);
       }
     } catch (error: any) {
-      setError(error.message || "Checkout failed");
+      // FIX #2: Sanitize error message
+      setError(sanitizeErrorMessage(error.message || "Checkout failed"));
       setCheckingOut(false);
     }
   }
@@ -977,14 +1064,17 @@ export default function AppPage() {
     return { ...job, matchScore, matchedSkills: [...new Set(matchedSkills)], missingKeywords, matchLevel };
   }
 
+  // ============================================
+  // FIX #1: Greeting - use real time, no "there"
+  // ============================================
   function getGreeting() {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
+    if (hour < 17) return "Good afternoon";
     return "Good evening";
   }
 
-  function getFirstName() {
+  function getFirstName(): string {
     // Priority: profile name from CV
     if (profile?.name) {
       return profile.name.split(" ")[0];
@@ -996,8 +1086,8 @@ export default function AppPage() {
     if (user?.user_metadata?.name) {
       return user.user_metadata.name.split(" ")[0];
     }
-    // Final fallback
-    return "there";
+    // FIX #1: Return empty string instead of "there"
+    return "";
   }
 
   // API calls
@@ -1014,14 +1104,16 @@ export default function AppPage() {
       });
       const data = await res.json();
       if (!res.ok || data.error) {
-        setError(data.error || "Search failed");
+        // FIX #2: Sanitize error message
+        setError(sanitizeErrorMessage(data.error || "Search failed"));
       } else {
         const jobsWithMatch = (data.jobs || []).map((job: Job) => calculateMatch(job));
         jobsWithMatch.sort((a: JobWithMatch, b: JobWithMatch) => b.matchScore - a.matchScore);
         setJobs(jobsWithMatch);
       }
     } catch (e: any) {
-      setError(e.message || "Search failed");
+      // FIX #2: Sanitize error message
+      setError(sanitizeErrorMessage(e.message || "Search failed"));
     } finally {
       setSearching(false);
     }
@@ -1118,7 +1210,8 @@ export default function AppPage() {
       const res = await fetch("/api/extract", { method: "POST", body: formData });
       const json = await res.json();
       if (!res.ok) {
-        setError(`Could not read file: ${json?.error || "unknown"}`);
+        // FIX #2: Sanitize error message
+        setError(sanitizeErrorMessage(`Could not read file: ${json?.error || "unknown"}`));
       } else {
         const extracted = (json?.text || "").trim();
         if (extracted.length < 80) {
@@ -1129,7 +1222,8 @@ export default function AppPage() {
         }
       }
     } catch (e: any) {
-      setError(`Upload failed: ${e?.message || "unknown"}`);
+      // FIX #2: Sanitize error message
+      setError(sanitizeErrorMessage(`Upload failed: ${e?.message || "unknown"}`));
     } finally {
       setUploading(false);
     }
@@ -1158,7 +1252,8 @@ export default function AppPage() {
       });
       const data = await res.json();
       if (!res.ok || data.error) {
-        setError(data.error || "Something went wrong");
+        // FIX #2: Sanitize error message
+        setError(sanitizeErrorMessage(data.error || "Something went wrong"));
         setScreen("newApplication");
       } else if (data.briefing) {
         // Generate personalized interview questions based on actual CV and job
@@ -1211,8 +1306,8 @@ export default function AppPage() {
           },
         ];
         
-        // Add second cover letter version (truly enthusiastic tone!)
-        data.briefing.coverLetterAlt = transformToEnthusiastic(data.briefing.coverLetter);
+        // FIX #3: Add second cover letter version with language support!
+        data.briefing.coverLetterAlt = transformToEnthusiastic(data.briefing.coverLetter, language);
         
         // Add salary trajectory data and interpretation
         const baseMin = parseInt(data.briefing.salaryIntelligence.estimatedRange.replace(/[^0-9]/g, '').slice(0, -3)) * 1000 || 85000;
@@ -1253,7 +1348,8 @@ export default function AppPage() {
         });
       }
     } catch (e: any) {
-      setError(e?.message || "Network error");
+      // FIX #2: Sanitize error message
+      setError(sanitizeErrorMessage(e?.message || "Network error"));
       setScreen("newApplication");
     }
   }
@@ -1304,7 +1400,8 @@ export default function AppPage() {
         trajectoryInterpretation: `Based on Swiss market data for this role level, you can expect 6-10% annual growth through skill advancement and role progression.`
       },
       coverLetter: item.cover_letter,
-      coverLetterAlt: transformToEnthusiastic(item.cover_letter),
+      // FIX #3: Use language when transforming historical items
+      coverLetterAlt: transformToEnthusiastic(item.cover_letter, language),
       redFlags: item.red_flags,
       interviewQuestions: [
         { question: `How have you applied ${skillsList} in your previous roles?`, why: "Verifying core competencies", angle: "Use specific examples with results", category: "Technical", difficulty: "Medium" },
@@ -1326,6 +1423,9 @@ export default function AppPage() {
   };
 
   const cvReady = cvText.length >= 50 && profile !== null;
+  
+  // FIX #1: Get display name (empty string if none)
+  const displayName = getFirstName();
 
   if (!user || loadingProfile) {
     return (
@@ -1400,10 +1500,10 @@ export default function AppPage() {
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#EA638C]/20 flex items-center justify-center text-[#EA638C] font-medium">
-              {getFirstName()[0]?.toUpperCase() || "U"}
+              {(displayName || user.email)?.[0]?.toUpperCase() || "U"}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{getFirstName()}</p>
+              <p className="text-sm font-medium truncate">{displayName || "User"}</p>
               <p className="text-xs text-white/40 truncate">{user.email}</p>
             </div>
           </div>
@@ -1430,9 +1530,10 @@ export default function AppPage() {
           {/* DASHBOARD */}
           {screen === "dashboard" && (
             <motion.div initial="hidden" animate="visible" variants={stagger} className="space-y-8">
+              {/* FIX #1: Greeting without "there" */}
               <motion.div variants={fadeIn}>
                 <h1 className="text-4xl lg:text-5xl font-bold mb-2">
-                  {getGreeting()}, {getFirstName()}
+                  {getGreeting()}{displayName ? `, ${displayName}` : ""}
                 </h1>
                 <p className="text-lg text-white/50">Here's your job search overview</p>
               </motion.div>

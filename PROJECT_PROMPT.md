@@ -1,136 +1,197 @@
-# CV App — Project Context Prompt
+# Mirax — Project Prompt
 
-Use this prompt to give Claude full context about this project before asking for improvements or edits.
+Use this prompt to continue development on Mirax in future sessions.
 
 ---
 
 ## Project Overview
 
-This is a **Next.js 15 (App Router) web app** called `cv-ch-eu` — an AI-powered CV tailoring tool. Users upload or paste their CV, paste a job description, and the app scores the keyword match and rewrites the CV using OpenAI to better fit the role.
+**Mirax** is a job application intelligence tool for Swiss and EU job seekers. It provides pre-application briefings including match analysis, salary intelligence, cover letter generation, interview prep, and red flag detection.
 
-**Tech stack:**
-- **Framework:** Next.js 15 (App Router, TypeScript)
-- **Styling:** Tailwind CSS v4
-- **Auth + DB:** Supabase (email/password + Google OAuth)
-- **AI:** OpenAI API (`gpt-5`, Responses API)
-- **File parsing:** `pdf-parse` (PDFs), `mammoth` (DOCX)
+**Live URL**: https://mirax-five.vercel.app
 
 ---
 
-## File Structure
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router, TypeScript)
+- **Styling**: Tailwind CSS v4
+- **Auth & Database**: Supabase
+- **AI**: OpenAI GPT-4o
+- **Payments**: Stripe (checkout, webhooks, customer portal)
+- **Job Search**: Adzuna API (CH/EU coverage)
+- **Hosting**: Vercel (auto-deploys from GitHub)
+
+---
+
+## Design Tokens
 
 ```
-app/
-  page.tsx                  # Landing page — links to /login and /app
-  layout.tsx                # Root layout (Geist font, global CSS)
-  globals.css               # Tailwind CSS entry
-  supabase.ts               # (legacy location, moved to lib/)
+Colors:
+- pink-accent: #EA638C
+- pink-deep: #89023E
+- dark-base: #30343F
+- dark-deep: #1B2021
 
-  login/
-    page.tsx                # Auth page — email/password sign up + sign in + Google OAuth
-
-  app/
-    page.tsx                # Main app UI (protected, requires auth)
-
-  api/
-    extract/
-      route.ts              # POST /api/extract — parses uploaded PDF/DOCX, returns plain text
-    rewrite/
-      route.ts              # POST /api/rewrite — calls OpenAI to rewrite CV for a JD
-
-  auth/
-    callback/
-      route.ts              # GET /auth/callback — redirects to /app after OAuth
-
-lib/
-  supabase.ts               # Supabase client (uses NEXT_PUBLIC_SUPABASE_URL + ANON_KEY)
+Font: Inter
+Style: Dark theme, premium SaaS aesthetic, pink accents, glow effects
 ```
 
 ---
 
-## Key Files Explained
+## Key File Paths
 
-### `app/app/page.tsx` — Main App (client component)
-The core of the product. State includes:
-- `targetRole` — the job title the user is targeting (default: "Data Analyst")
-- `country` — "CH" (Switzerland) or "EU"
-- `language` — "EN" or "FR" (passed to OpenAI prompt)
-- `cvText` — the CV text (auto-filled from upload or manually pasted)
-- `extraSkills` — optional extra keywords to add to the CV text before scoring
-- `jobDescription` — the pasted job description
-- `matchScore`, `foundKeywords`, `missingKeywords` — keyword match results
-- `generatedCv`, `rewriteFeedback` — AI rewrite output
-- `lastResumeId` — Supabase row ID used to update the same row after rewrite
+```
+Landing Page:        app/page.tsx
+Main App:            app/app/page.tsx
+Login:               app/login/page.tsx
+Privacy Policy:      app/privacy/page.tsx
+Terms of Service:    app/terms/page.tsx
+Auth Callback:       app/auth/callback/route.ts
 
-**Main user flow:**
-1. Upload PDF/DOCX → `/api/extract` → fills `cvText` textarea
-2. Paste job description
-3. Click **Save + Score** → runs local keyword extraction + match scoring → saves row to Supabase `resumes` table
-4. Click **Rewrite my CV for this JD** → calls `/api/rewrite` → shows AI-rewritten CV + feedback → updates same Supabase row
+API Routes:
+- app/api/analyze/route.ts          → Job analysis (GPT-4o)
+- app/api/extract-profile/route.ts  → CV parsing
+- app/api/interview-prep/route.ts   → Interview questions
+- app/api/cover-letter/route.ts     → Cover letter generation
+- app/api/jobs/search/route.ts      → Adzuna job search
+- app/api/user/status/route.ts      → Subscription status
+- app/api/user/usage/route.ts       → Usage tracking
+- app/api/stripe/checkout/route.ts  → Stripe checkout session
+- app/api/stripe/webhook/route.ts   → Stripe webhook handler
+- app/api/stripe/portal/route.ts    → Customer portal
 
-**Keyword logic (local, no AI):**
-- `extractKeywordsFromJD(jd)` — extracts up to 20 keywords from the JD using multi-word phrases, a hardcoded hard-skills list, and single-word fallback with a stop-word filter
-- `computeMatchScore(cv, keywords)` — checks which keywords appear in the CV, returns `score`, `found`, `missing`
-
-### `app/api/extract/route.ts` — File Parser
-Accepts a `multipart/form-data` POST with a `file` field. Supports `.pdf` (via `pdf-parse`) and `.docx` (via `mammoth`). Returns `{ text: string }`.
-
-### `app/api/rewrite/route.ts` — AI Rewrite
-Accepts JSON body: `{ targetRole, country, language, cvText, jobDescription, extraSkills }`.  
-Calls OpenAI `gpt-5` (Responses API) with a system instruction to act as a recruiter/ATS expert.  
-Returns JSON: `{ rewritten_cv, feedback, top_keywords_to_add }`.
-
-### `app/login/page.tsx` — Auth
-Email/password sign up + sign in via Supabase. Google OAuth via `signInWithOAuth` with redirect to `/auth/callback`. Currently has a JSX syntax bug (a `<button>` is rendered outside the `return` block).
-
-### `lib/supabase.ts` — Supabase Client
-```ts
-import { createClient } from "@supabase/supabase-js";
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+Supabase:
+- lib/supabase.ts                   → Client
+- supabase/migrations/              → DB schema
 ```
 
 ---
 
-## Supabase `resumes` Table Schema (inferred from code)
+## Database Schema (Supabase)
 
-| Column              | Type      | Notes                              |
-|---------------------|-----------|------------------------------------|
-| id                  | uuid      | Primary key                        |
-| user_id             | uuid      | Foreign key to auth.users          |
-| target_role         | text      |                                    |
-| target_country      | text      | "CH" or "EU"                       |
-| language            | text      | "EN" or "FR"                       |
-| raw_cv              | text      | CV text + extra skills combined    |
-| job_description     | text      |                                    |
-| match_score         | int       | 0–100                              |
-| found_keywords      | text      | Comma-separated                    |
-| missing_keywords    | text      | Comma-separated                    |
-| source_file_name    | text      | Original uploaded filename         |
-| generated_cv        | text      | AI rewrite output                  |
-| rewrite_feedback    | text      | AI feedback / keywords to add      |
-| rewrite_status      | text      | "draft" or "done"                  |
-| rewrite_created_at  | timestamp |                                    |
+### user_profiles
+- id (uuid, references auth.users)
+- email
+- full_name
+- cv_text
+- extracted_profile (jsonb)
+- is_pro (boolean)
+- stripe_customer_id
+- stripe_subscription_id
+- subscription_status
+- subscription_end
+- subscription_plan
+- analyses_used (int)
+- analyses_reset_date
 
----
-
-## Known Issues / Areas for Improvement
-
-1. **`app/login/page.tsx` syntax bug** — the Google OAuth `<button>` is placed outside the `return (...)` block, causing a compile error.
-2. **Duplicate `if (!res.ok)` check** in `rewriteWithAI()` in `app/app/page.tsx` (lines ~306 and ~311).
-3. **Keyword extraction is hardcoded** — the `extractKeywordsFromJD` function uses a fixed list of hard skills and phrases. Could be improved with a more dynamic approach.
-4. **No loading skeleton or error boundary** in the main app.
-5. **`app/supabase.ts`** appears to be a stale file; the canonical client is in `lib/supabase.ts`.
-6. **`layout.tsx` metadata** still has the default "Create Next App" title/description.
+### job_analyses
+- id
+- user_id
+- job_title
+- company
+- job_description
+- analysis_result (jsonb)
+- created_at
 
 ---
 
-## Environment Variables Required
+## Features Built
 
+### Free Tier (3 analyses/month)
+- ✅ Match verdict with reasoning
+- ✅ Gap analysis (strengths & weaknesses)
+- ✅ Salary intelligence (CH/EU ranges)
+- ✅ Red flag detection
+- ✅ CV upload & profile extraction
+- ✅ Job search via Adzuna
+
+### Pro Tier ($12/mo or $45/6mo)
+- ✅ Unlimited analyses
+- ✅ Full cover letters (EN/FR/DE/ES)
+- ✅ Professional & Enthusiastic versions
+- ✅ PDF download for cover letters
+- ✅ Personalized interview prep questions
+- ✅ Salary trajectory chart
+- ✅ Deep red flag analysis
+
+### App Features
+- ✅ Sidebar navigation (Dashboard, New Analysis, History, Profile)
+- ✅ 6-section briefing layout
+- ✅ Pro/Free gating with upgrade modals
+- ✅ Welcome Pro celebration modal
+- ✅ History page with past analyses
+- ✅ CV persistence across sessions
+- ✅ Google OAuth + Email auth
+
+### Stripe Integration
+- ✅ Checkout session creation
+- ✅ Webhook handling (4 events)
+- ✅ Customer portal for subscription management
+- ✅ Pro status synced to Supabase
+
+---
+
+## Environment Variables
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+OPENAI_API_KEY=sk-...
+ADZUNA_APP_ID=xxx
+ADZUNA_API_KEY=xxx
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_PRO_MONTHLY=price_...
+STRIPE_PRICE_PRO_BUNDLE=price_...
+NEXT_PUBLIC_APP_URL=https://mirax-five.vercel.app
 ```
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-OPENAI_API_KEY=
+
+---
+
+## Deployment Workflow
+
+```bash
+# Make changes locally
+npm run dev
+
+# Test at localhost:3000
+
+# Push to GitHub
+git add .
+git commit -m "Your message"
+git push
+
+# Vercel auto-deploys from main branch
 ```
+
+---
+
+## Pending / Future Ideas
+
+- [ ] Usage tracking enforcement (decrement analyses_used)
+- [ ] Email notifications (welcome, subscription)
+- [ ] Application tracking dashboard
+- [ ] Mobile app version
+- [ ] Chrome extension for job boards
+
+---
+
+## Developer Notes
+
+- Orlando is a non-expert developer — provide step-by-step guidance
+- Use terminal `cat` commands for creating API routes (avoids encoding issues)
+- Always add `Variants` type to Framer Motion animation objects
+- Test Stripe webhooks locally with `stripe listen --forward-to localhost:3000/api/stripe/webhook`
+- Supabase service role key starts with `eyJ`, NOT `sb_secret_`
+
+---
+
+## Author Context
+
+Built by Orlando after 120+ job applications in Switzerland. The personal job search experience is the authentic marketing story and key differentiator.
+
+---
+
+*Last updated: April 2026*
